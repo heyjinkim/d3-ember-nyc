@@ -6,6 +6,7 @@
   <script src="libs/jquery-1.10.2.js"></script>
   <script src="libs/handlebars-1.1.2.js"></script>
   <script src="libs/ember-1.5.1.js"></script>
+  <script src="js/data.js"></script>
   <link rel="stylesheet" href="css/d3.css">
   <title>Reusable D3 charts with Ember.js Components</title>
 </head>
@@ -13,9 +14,9 @@
 <body>
 
   <script type="text/x-handlebars" id="application">
-    {{bar-chart width=300 height=160 data=content}}
-    {{!bar-chart width=600 height=200 data=content}}
-    {{!bar-chart width=300 height=200 data=content2}}
+    {{bar-chart width=960 height=500 data=content class="big"}}
+    {{!bar-chart width=600 height=200 data=content class="small"}}
+    {{!bar-chart width=300 height=200 data=content2 class="content2"}}
   </script>
 
   <script type="text/x-handlebars" id="components/bar-chart">
@@ -31,19 +32,8 @@
     App = Ember.Application.create();
 
     App.ApplicationController = Ember.ArrayController.extend({
-      content: Ember.A([
-        { 'letter':'A', 'frequency':0.01492 },
-        { 'letter':'B', 'frequency':0.08167 },
-        { 'letter':'C', 'frequency':0.02780 },
-        { 'letter':'D', 'frequency':0.04253 },
-        { 'letter':'E', 'frequency':0.12702 }
-      ]),
-
-      // content2: Ember.A([
-      //   { 'letter':'A', 'frequency':0.08167 },
-      //   { 'letter':'B', 'frequency':0.01167 },
-      //   { 'letter':'C', 'frequency':0.05492 }
-      // ])
+      content: Ember.A(DATA),
+      content2: Ember.A(DATA2)
     });
 
     App.BarChartComponent = Ember.Component.extend({
@@ -63,15 +53,16 @@
         return 'translate(' + this.margin.left + ',' + this.margin.top + ')';
       }.property(),
 
-      draw: function(){
+      d3code: function(){
         var width = this.get('_width');
         var height = this.get('_height');
         var data = this.get('data');
         var svg = d3.select('#'+this.get('elementId'));
+
         var x = d3.scale.ordinal().rangeRoundBands([0, width], 0.1);
         var y = d3.scale.linear().range([height, 0]);
         var xAxis = d3.svg.axis().scale(x).orient('bottom');
-        var yAxis = d3.svg.axis().scale(y).orient('left').ticks(10,'%');
+        var yAxis = d3.svg.axis().scale(y).orient('left');
 
         x.domain(data.map(function(d) { return d.letter; }));
         y.domain([0, d3.max(data, function(d) { return d.frequency; })]);
@@ -93,7 +84,7 @@
       },
 
       didInsertElement: function(){
-        this.draw();
+        this.d3code();
       }
     });
   </script>

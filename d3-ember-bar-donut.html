@@ -6,6 +6,7 @@
   <script src="libs/jquery-1.10.2.js"></script>
   <script src="libs/handlebars-1.1.2.js"></script>
   <script src="libs/ember-1.5.1.js"></script>
+  <script src="js/data.js"></script>
   <link rel="stylesheet" href="css/d3.css">
   <title>Reusable D3 charts with Ember.js Components</title>
 </head>
@@ -13,8 +14,8 @@
 <body>
 
   <script type="text/x-handlebars" id="application">
-    {{bar-chart width=300 height=160 data=content}}
-    {{donut-chart width=200 height=200 data=content class="L"}}
+    {{bar-chart width=960 height=500 data=content class="big"}}
+    {{donut-chart width=200 height=200 data=content class="cream"}}
   </script>
 
   <script type="text/x-handlebars" id="components/bar-chart">
@@ -34,19 +35,8 @@
     App = Ember.Application.create();
 
     App.ApplicationController = Ember.ArrayController.extend({
-      content: Ember.A([
-        { 'letter':'A', 'frequency':1492 },
-        { 'letter':'B', 'frequency':8167 },
-        { 'letter':'C', 'frequency':2780 },
-        { 'letter':'D', 'frequency':4253 },
-        { 'letter':'E', 'frequency':12702 }
-      ]),
-
-      content2: Ember.A([
-        { 'letter':'A', 'frequency':0.08167 },
-        { 'letter':'B', 'frequency':0.01167 },
-        { 'letter':'C', 'frequency':0.05492 }
-      ])
+      content: Ember.A(DATA),
+      content2: Ember.A(DATA2)
     });
 
     App.BarChartComponent = Ember.Component.extend({
@@ -66,11 +56,12 @@
         return 'translate(' + this.margin.left + ',' + this.margin.top + ')';
       }.property(),
 
-      draw: function(){
+      d3code: function(){
         var width = this.get('_width');
         var height = this.get('_height');
         var data = this.get('data');
         var svg = d3.select('#'+this.get('elementId'));
+
         var x = d3.scale.ordinal().rangeRoundBands([0, width], 0.1);
         var y = d3.scale.linear().range([height, 0]);
         var xAxis = d3.svg.axis().scale(x).orient('bottom');
@@ -92,14 +83,12 @@
           .attr('x', function(d) { return x(d.letter); })
           .attr('width', x.rangeBand())
           .attr('y', function(d) { return y(d.frequency); })
+          /* ----  add class name on bar ----*/
+          .attr('class', function(d) { return d.letter; })
+          /* ----  add class name on bar ----*/
           .attr('height', function(d) { return height - y(d.frequency); });
-      },
-
-      didInsertElement: function(){
-        this.draw();
-      }
+      }.on('didInsertElement')
     });
-
 
     App.DonutChartComponent = Ember.Component.extend({
       tagName: 'svg',
@@ -109,7 +98,7 @@
         return 'translate(' + this.get('width')/2 + ',' + this.get('height')/2 + ')';
       }.property('width', 'height'),
 
-      draw: function() {
+      d3code: function() {
         var radius = Math.min(this.get('width'), this.get('height')) / 2;
 
         var arc = d3.svg.arc()
@@ -132,7 +121,6 @@
           .attr('class', function(d, i) { return d.data.letter; });
       }.on('didInsertElement')
     });
-
   </script>
 </body>
 </html>

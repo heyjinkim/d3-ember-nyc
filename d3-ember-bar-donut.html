@@ -119,8 +119,17 @@
         g.append('path')
           .attr('d', arc)
           .attr('class', function(d, i) { return d.data.letter; });
+
+        g.append("text")
+          .attr("transform", function(d) { return "translate(" + arc.centroid(d) + ")"; })
+          .attr("dy", ".35em")
+          .style("text-anchor", "middle")
+          .text(function(d) { return d.data.letter; });
       }.on('didInsertElement')
     });
   </script>
+
+  <a href="http://bl.ocks.org/mbostock/3885304" target="_blank">bar</a>
+  <a href="http://bl.ocks.org/mbostock/3887193" target="_blank">donut</a>
 </body>
 </html>

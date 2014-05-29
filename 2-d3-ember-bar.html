@@ -14,13 +14,13 @@
 <body>
 
   <script type="text/x-handlebars" id="application">
-    {{bar-chart width=960 height=500 data=content class="big"}}
-    {{!bar-chart width=600 height=200 data=content class="small"}}
-    {{!bar-chart width=300 height=200 data=content2 class="content2"}}
+    {{bar-chart width=960 height=500 data=content}}
+    {{!bar-chart width=600 height=200 data=content}}
+    {{!bar-chart width=300 height=200 data=content2}}
   </script>
 
   <script type="text/x-handlebars" id="components/bar-chart">
-    <g class="wrapper" {{bindAttr transform=transform}}>
+    <g class="wrapper" {{bind-attr transform=transform}}>
       <g class="x axis"></g>
       <g class="y axis">
         <text transform="rotate(-90)" y="6" dy=".71em" style="text-anchor:end;">Frequency</text>
@@ -41,21 +41,13 @@
       attributeBindings: 'width height'.w(),
       margin: {top: 20, right: 20, bottom: 30, left: 40},
 
-      _width: function(){
-        return this.get('width') - this.margin.left - this.margin.right;
-      }.property('width'),
-
-      _height: function(){
-        return this.get('height') - this.margin.top - this.margin.bottom;
-      }.property('height'),
-
       transform: function(){
         return 'translate(' + this.margin.left + ',' + this.margin.top + ')';
       }.property(),
 
       d3code: function(){
-        var width = this.get('_width');
-        var height = this.get('_height');
+        var width = this.get('width') - this.margin.left - this.margin.right;
+        var height = this.get('height') - this.margin.top - this.margin.bottom;
         var data = this.get('data');
         var svg = d3.select('#'+this.get('elementId'));
 

@@ -18,41 +18,25 @@
     {{donut-chart width=200 height=200 data=content}}
   </script>
 
-  <script type="text/x-handlebars" id="components/bar-chart">
-    <g class="wrapper" {{bind-attr transform=transform}}>
-      <g class="x axis"></g>
-      <g class="y axis">
-        <text transform="rotate(-90)" y="6" dy=".71em" style="text-anchor:end;">Frequency</text>
-      </g>
-    </g>
-  </script>
-
-  <script type="text/x-handlebars" id="components/donut-chart">
-    <g {{bind-attr transform=transform}}></g>
-  </script>
 
   <script>
     App = Ember.Application.create();
 
     App.ApplicationController = Ember.ArrayController.extend({
-      content: Ember.A(DATA),
-      content2: Ember.A(DATA2)
+      // usually, make an ajax request in route
+      content: Ember.A(DATA)
     });
 
     App.BarChartComponent = Ember.Component.extend({
       tagName: 'svg',
       attributeBindings: 'width height'.w(),
-      margin: {top: 20, right: 20, bottom: 30, left: 40},
-
-      transform: function(){
-        return 'translate(' + this.margin.left + ',' + this.margin.top + ')';
-      }.property(),
 
       d3code: function(){
-        var width = this.get('width') - this.margin.left - this.margin.right;
-        var height = this.get('height') - this.margin.top - this.margin.bottom;
+        var margin = {top: 20, right: 20, bottom: 30, left: 40};
+        var width = this.get('width') - margin.left - margin.right;
+        var height = this.get('height') - margin.top - margin.bottom;
         var data = this.get('data');
-        var svg = d3.select('#'+this.get('elementId'));
+        var svg = d3.select(this.get('element'));
 
         var x = d3.scale.ordinal().rangeRoundBands([0, width], 0.1);
         var y = d3.scale.linear().range([height, 0]);
@@ -62,23 +46,36 @@
         x.domain(data.map(function(d) { return d.letter; }));
         y.domain([0, d3.max(data, function(d) { return d.frequency; })]);
 
-        svg.select('.axis.x')
-          .attr('transform', 'translate(0,' + height + ')')
+        svg = svg.append("g")
+          .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+        svg.append("g")
+          .attr("class", "x axis")
+          .attr("transform", "translate(0," + height + ")")
           .call(xAxis);
 
-        svg.select('.axis.y').call(yAxis);
+        svg.append("g")
+            .attr("class", "y axis")
+            .call(yAxis)
+          .append("text")
+            .attr("transform", "rotate(-90)")
+            .attr("y", 6)
+            .attr("dy", ".71em")
+            .style("text-anchor", "end")
+            .text("Frequency");
 
-        svg.select('.wrapper').selectAll('rect')
-          .data(data)
-        .enter().append('rect')
-          .attr('class', 'bar')
-          .attr('x', function(d) { return x(d.letter); })
-          .attr('width', x.rangeBand())
-          .attr('y', function(d) { return y(d.frequency); })
-          /* ----  add class name on bar ----*/
-          .attr('class', function(d) { return d.letter; })
-          /* ----  add class name on bar ----*/
-          .attr('height', function(d) { return height - y(d.frequency); });
+        svg.selectAll(".bar")
+            .data(data)
+          .enter().append("rect")
+            .attr("class", "bar")
+            .attr("x", function(d) { return x(d.letter); })
+            .attr("width", x.rangeBand())
+            .attr("y", function(d) { return y(d.frequency); })
+            .attr("height", function(d) { return height - y(d.frequency); })
+            /* ----  add class name on bar ----*/
+            .attr('class', function(d) { return d.letter; });
+            /* ----  add class name on bar ----*/
+
       }.on('didInsertElement')
     });
 
@@ -86,22 +83,20 @@
       tagName: 'svg',
       attributeBindings: 'width height'.w(),
 
-      transform: function(){
-        return 'translate(' + this.get('width')/2 + ',' + this.get('height')/2 + ')';
-      }.property('width', 'height'),
-
       d3code: function() {
         var radius = Math.min(this.get('width'), this.get('height')) / 2;
 
         var arc = d3.svg.arc()
             .outerRadius(radius)
-            .innerRadius(radius-15);
+            .innerRadius(radius-20);
 
         var pie = d3.layout.pie()
             .sort(null)
             .value(function(d) { return d.frequency; });
 
-        var svg = d3.select('#'+this.get('elementId')).select('g');
+        var svg = d3.select('#'+this.get('elementId'))
+          .append('g')
+            .attr('transform', 'translate(' + this.get('width')/2 + ',' + this.get('height')/2 + ')');
 
         var g = svg.selectAll('.arc')
            .data(pie(this.get('data'))).enter()
@@ -118,6 +113,7 @@
           .style("text-anchor", "middle")
           .text(function(d) { return d.data.letter; });
       }.on('didInsertElement')
+
     });
   </script>
 

@@ -8,7 +8,7 @@ var DATA = [
 
 var DATA2 = [
   { 'letter':'A', 'frequency':1492 },
-  { 'letter':'B', 'frequency':12702 },
+  { 'letter':'B', 'frequency':8167 },
   { 'letter':'C', 'frequency':4253 }
 ];
 

@@ -83,7 +83,7 @@
       tagName: 'svg',
       attributeBindings: 'width height'.w(),
 
-      d3code: function() {
+      draw: function() {
         var radius = Math.min(this.get('width'), this.get('height')) / 2;
 
         var arc = d3.svg.arc()
@@ -94,7 +94,7 @@
             .sort(null)
             .value(function(d) { return d.frequency; });
 
-        var svg = d3.select('#'+this.get('elementId'))
+        var svg = d3.select(this.get('element'))
           .append('g')
             .attr('transform', 'translate(' + this.get('width')/2 + ',' + this.get('height')/2 + ')');
 

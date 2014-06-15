@@ -14,19 +14,25 @@
 <body>
 
   <script type="text/x-handlebars" id="application">
-    {{bar-chart width=960 height=500 data=content}}
+    {{bar-chart width=600 height=300 data=content}}
+    {{bar-chart width=300 height=150 data=content}}
 
-    {{!bar-chart width=600 height=200 data=content}}
     {{!bar-chart width=300 height=200 data=content2}}
   </script>
 
   <script>
     App = Ember.Application.create();
 
-    App.ApplicationController = Ember.ArrayController.extend({
-      // usually, make an ajax request in route
-      content: Ember.A(DATA),
-      content2: Ember.A(DATA2)
+    App.ApplicationRoute = Ember.Route.extend({
+      model: function(){
+        return Ember.A([
+          Ember.Object.create({'letter':'A', 'frequency':1492 }),
+          Ember.Object.create({ 'letter':'B', 'frequency':8167 }),
+          Ember.Object.create({ 'letter':'C', 'frequency':2780 }),
+          Ember.Object.create({ 'letter':'D', 'frequency':4253 }),
+          Ember.Object.create({ 'letter':'E', 'frequency':12702 })
+        ]);
+      }
     });
 
     App.BarChartComponent = Ember.Component.extend({
@@ -77,7 +83,6 @@
 
       }.on('didInsertElement')
     });
-
   </script>
 
   <a href="http://bl.ocks.org/mbostock/3885304" target="_blank">bar</a>

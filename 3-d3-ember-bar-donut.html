@@ -8,23 +8,50 @@
   <script src="libs/ember-1.5.1.js"></script>
   <script src="js/data.js"></script>
   <link rel="stylesheet" href="css/d3.css">
-  <title>Reusable D3 charts with Ember.js Components</title>
+  <title>Updating Data with Multiple D3 chart Ember Components</title>
 </head>
 
 <body>
-
   <script type="text/x-handlebars" id="application">
     {{bar-chart width=560 height=350 data=content}}
     {{donut-chart width=200 height=200 data=content}}
-  </script>
 
+    <br /><br />
+    <button {{action changeNumbers}}>change numbers</button>
+    <button {{action removeObject content.lastObject}}>remove data</button>
+  </script>
 
   <script>
     App = Ember.Application.create();
 
+    App.ApplicationRoute = Ember.Route.extend({
+      model: function(){
+        return Ember.A([
+          Ember.Object.create({'letter':'A', 'frequency':1492 }),
+          Ember.Object.create({ 'letter':'B', 'frequency':8167 }),
+          Ember.Object.create({ 'letter':'C', 'frequency':2780 }),
+          Ember.Object.create({ 'letter':'D', 'frequency':4253 }),
+          Ember.Object.create({ 'letter':'E', 'frequency':12702 })
+        ]);
+      }
+    });
+
     App.ApplicationController = Ember.ArrayController.extend({
-      // usually, make an ajax request in route
-      content: Ember.A(DATA)
+      actions: {
+        removeObject: function(letter){
+         this.get('content').removeObject(letter);
+        },
+
+        changeNumbers: function(){
+          this.get('content').forEach(function(item){
+            if (item.get('frequency') % 2 == 1){
+            item.decrementProperty('frequency', 200);
+            } else {
+              item.incrementProperty('frequency', 100);
+            }
+          });
+        }
+      }
     });
 
     App.BarChartComponent = Ember.Component.extend({
@@ -72,12 +99,19 @@
             .attr("width", x.rangeBand())
             .attr("y", function(d) { return y(d.frequency); })
             .attr("height", function(d) { return height - y(d.frequency); })
-            /* ----  add class name on bar ----*/
+            /********* add class name on bar **********/
             .attr('class', function(d) { return d.letter; });
-            /* ----  add class name on bar ----*/
+            /********* add class name on bar **********/
 
-      }.on('didInsertElement')
+      }.on('didInsertElement'),
+
+      redraw: function(){
+        var svg = d3.select(this.get('element'));
+        svg.selectAll('*').remove();
+        this.draw();
+      }.observes('data.@each.frequency')
     });
+
 
     App.DonutChartComponent = Ember.Component.extend({
       tagName: 'svg',
@@ -112,7 +146,14 @@
           .attr("dy", ".35em")
           .style("text-anchor", "middle")
           .text(function(d) { return d.data.letter; });
-      }.on('didInsertElement')
+      }.on('didInsertElement'),
+
+
+      redraw: function(){
+        var svg = d3.select(this.get('element'));
+        svg.selectAll('*').remove();
+        this.draw();
+      }.observes('data.@each.frequency')
 
     });
   </script>

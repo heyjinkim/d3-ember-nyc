@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>SVG Bar Chart</title>
+</head>
+
+<body>
+
+  <svg width="400" height="250">
+    <g transform="translate(30, 30)">
+      <!-- Bar -->
+      <rect width="50" height="150" x="50" y="20" fill="#3b5998" />
+      <rect width="50" height="120" x="105" y="50" fill="#1ab1e8"/>
+      <rect width="50" height="90" x="160" y="80" fill="#efaf25"/>
+      <rect width="50" height="60" x="215" y="110" fill="#ca222d" />
+      <rect width="50" height="40" x="270" y="130" fill="#ccc" />
+
+      <!-- X Axis -->
+      <line x1="40" x2="330" y1="175" y2="175" stroke="black" stroke-width="2"/>
+      <text x="60" y="190">Mon</text>
+      <text x="115" y="190">Tue</text>
+      <text x="170" y="190">Wed</text>
+      <text x="226" y="190">Thu</text>
+      <text x="286" y="190">Fri</text>
+
+      <!-- Y Axis -->
+      <line x1="40" x2="40" y1="0" y2="175" stroke="black" stroke-width="2"/>
+      <text x="15" y="30">5</text>
+      <text x="15" y="60">4</text>
+      <text x="15" y="90">3</text>
+      <text x="15" y="120">2</text>
+      <text x="15" y="150">1</text>
+    </g>
+  </svg>
+
+</body>
+</html>

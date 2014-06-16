@@ -3,10 +3,10 @@ D3 with Ember for Data Visualization
 
 Examples
 
-1. SVG bar chart in HTML
+0. SVG bar chart in HTML
 
-2. D3 bar chart
+1. D3 bar chart
 
-3. Reusable D3 bar chart with Ember Component
+2. Reusable D3 bar chart with Ember Component / JSBin(http://jsbin.com/tinifewa/4)
 
-4. Updating data with multiple D3 charts with Ember Component
+3. Multiple D3 charts with Ember Component / JSBin(http://jsbin.com/zeferipe/4)
